@@ -1,21 +1,35 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Navbar from './Navbar';
 import axios from "axios";
 
 export default function Drinks() {
   const url = process.env.REACT_APP_BASE_URL;
-  const [data, setData] = useState([]);
+  const [drinks, setDrinks] = useState([]);
   const [loader,setLoader] =useState(true);
- 
-  const fetchData = useCallback(async () => {
+  const [res, setRes] = useState('');
+  const mounted = useRef(null)
+  const fetchData = async () => {
     await axios.get(`${url}/fetch`).then((response) => {
-        setData(response.data.data)
+        setDrinks(response.data.data)
+        setLoader(false)
+        if(response.data.data.length === 0) {
+          setRes('No data records found');
+        } else {
+          setRes('');
+        }
+    }).catch((err) => {
+      setRes('Error Occured')
+      setLoader(false)
     })
-    setLoader(false)
-  })
+    
+  }
+
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    if(!mounted.current) {
+      fetchData()
+      mounted.current = true;
+    }
+  })
 
   return (
     <>
@@ -28,12 +42,12 @@ export default function Drinks() {
                 </div>
             </div>
         )}
-       {data.length === 0  && !loader && (
-        <div className="my-5 text-center h3">No data found. </div>
+       {res && (
+        <div className="my-5 text-center h3">{res} </div>
        )}
-        {data && data.length > 0 && !loader && (
+        {drinks && drinks.length > 0 && !loader && (
           <ul className="list-group my-3">
-            {data.map((el, index) => (
+            {drinks.map((el, index) => (
               <li className="list-group-item d-flex" key={index}>
                 <div className="w-50 d-flex">
                     <div className="mx-2" > <img src={el.strDrinkThumb} alt="" width={'50px'} /></div>

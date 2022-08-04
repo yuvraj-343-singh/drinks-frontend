@@ -9,19 +9,29 @@ export default function Home() {
   const [drinks, setDrinks] = useState([]);
   const [loader,setLoader] =useState(false);
   const [resLoader,setResLoader] = useState(false);
+  const [res, setRes] = useState('');
   const url = process.env.REACT_APP_BASE_URL;
-  const fetchData = (event) => {
+  const fetchData = async (event) => {
+    setDrinks([]);
     setLoader(true);
     if (event.target.value !== "") {
       let getUrl = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${event.target.value}`;
-      axios.get(getUrl).then((response) => {
+      await axios.get(getUrl).then((response) => {
         setDrinks(response.data.drinks);
+        console.log(response)
         setLoader(false);
+        if(response.data.drinks === null ) {
+          setRes('No matching record found');
+        } else {
+          setRes('');
+        }
+      }).catch((err) => {
+        setRes('Error occured')
       });
-      console.log(drinks);
     } else {
         setLoader(false);
-        setDrinks([])
+        setDrinks([]);
+        setRes('');
     }
   };
   const addDrink = (event, data) => {
@@ -61,6 +71,11 @@ export default function Home() {
                 </div>
             </div>
         )}
+
+        {res && (
+          <div className="my-5 text-center h3">{res} </div>
+        )}
+
        
         {drinks && drinks.length > 0 && !loader && (
           <ul className="list-group">

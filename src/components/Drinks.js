@@ -10,6 +10,7 @@ export default function Drinks() {
   const mounted = useRef(null)
   const fetchData = async () => {
     await axios.get(`${url}/fetch`).then((response) => {
+      console.log(response)
         setDrinks(response.data.data)
         setLoader(false)
         if(response.data.data.length === 0) {

@@ -47,6 +47,17 @@ export default function Home() {
             draggable: true,
             progress: undefined,
         });
+    }).catch((err) => {
+      setResLoader(false);
+        toast.error('Error occured', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
     })
   }
   return (
